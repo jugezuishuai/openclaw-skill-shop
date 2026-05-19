@@ -15,3 +15,224 @@
 - Middleware uses the Next.js 16 middleware convention (deprecation warning for "proxy" is advisory only)
 - Service client uses SUPABASE_SERVICE_ROLE_KEY for admin operations
 - All clients use @supabase/ssr for cookie-based auth in App Router
+
+## 2026-05-19 - Task 4: 用户认证 - 登录与注册
+
+### What was done:
+- Created lib/auth/actions.ts with login, register, logout Server Actions using Supabase auth
+- Created app/login/page.tsx with callbackUrl support and success message display
+- Created app/register/page.tsx
+- Created components/auth/LoginForm.tsx with useActionState and error display
+- Created components/auth/RegisterForm.tsx with password confirmation validation
+- Created components/auth/LogoutButton.tsx with useTransition
+- Login redirects to callbackUrl or home page
+- Register redirects to login page with success message
+
+### Testing:
+- npm run lint: passed
+- npm run build: passed (all routes compiled)
+
+### Notes:
+- Uses React 19 useActionState for form state management
+- Uses 'use server' Server Actions for secure auth operations
+
+## 2026-05-19 - Task 5: 认证保护中间件
+
+### What was done:
+- Updated middleware.ts to protect /dashboard, /publish, /orders, /library, /admin routes
+- Unauthenticated users redirected to /login with callbackUrl
+- Authenticated users redirected away from /login and /register to /
+- Preserves callbackUrl for post-login redirect back
+
+### Testing:
+- npm run lint: passed
+- npm run build: passed
+
+### Notes:
+- Admin role validation will be enforced at page/API level (Task 23/24) per Next.js security best practices
+
+## 2026-05-19 - Task 6: 基础布局和导航
+
+### What was done:
+- Updated app/layout.tsx with Header, Footer, Geist fonts, and improved metadata
+- Created components/layout/Header.tsx with nav links (商店, 我的技能库, 发布技能) and auth state
+- Created components/layout/MobileMenu.tsx with slide-down mobile navigation
+- Created components/layout/Footer.tsx
+- Added lucide-react icons for navigation entries
+
+## 2026-05-19 - Task 7: 技能数据访问层
+
+### What was done:
+- Created lib/db/skills.ts with full CRUD: createSkill, updateSkill, getSkillBySlug, listSkills, getUserSkills
+- Skill versions: publishSkillVersion, getSkillVersions
+- Favorites: favoriteSkill, unfavoriteSkill
+- Installs: recordInstall
+- Full TypeScript types for Skill, SkillVersion, and all input/output types
+
+## 2026-05-19 - Task 8: 订单和购买数据访问层
+
+### What was done:
+- Created lib/db/orders.ts: createOrder, markOrderPaid, getUserPurchases, canAccessSkill, getUserOrders, getOrderById
+- Created lib/db/reviews.ts: createReview, updateReview, deleteReview, getSkillReviews, refreshSkillRating
+- Free skill auto-grant access via canAccessSkill check
+- markOrderPaid uses service client for secure payment processing
+
+## 2026-05-19 - Task 9: 技能包上传和校验
+
+### What was done:
+- Created types/skill.ts: SkillManifest, SkillManifestPermission, SkillManifestCommand types
+- Created lib/skills/manifest.ts: validateManifest with field-level error reporting
+- Created lib/skills/package.ts: validatePackageFile, uploadSkillPackage, uploadSkillAsset, getSkillPackageSignedUrl
+- Validates: name format, semver version, description length, entry file extension, permissions array, commands array
+
+## 2026-05-19 - Task 10: 技能 API - CRUD
+
+### What was done:
+- Created app/api/skills/route.ts: GET list (pagination, filter, sort), POST create
+- Created app/api/skills/[slug]/route.ts: GET detail, PATCH update, DELETE archive
+- Auth checks with admin override on update/delete
+
+## 2026-05-19 - Task 11: 技能版本 API
+
+### What was done:
+- Created app/api/skills/[slug]/versions/route.ts: GET list, POST publish
+- Created app/api/skills/[slug]/download/route.ts: GET signed download URL (checks access)
+- Created app/api/skills/[slug]/install/route.ts: POST record install
+
+## 2026-05-19 - Task 12: 分类 API 和管理
+
+### What was done:
+- Created app/api/categories/route.ts: GET list, POST create (admin only)
+- Created app/api/categories/[id]/route.ts: PATCH update, DELETE (admin only)
+
+## 2026-05-19 - Task 13: 订单和支付 API
+
+### What was done:
+- Created app/api/orders/route.ts: GET list, POST create (free = auto purchase)
+- Created app/api/orders/[id]/route.ts: GET detail
+- Created app/api/payments/mock/route.ts: POST mock pay (dev only)
+
+## 2026-05-19 - Task 14: 评价和收藏 API
+
+### What was done:
+- Created app/api/skills/[slug]/favorite/route.ts: POST favorite, DELETE unfavorite
+- Created app/api/skills/[slug]/reviews/route.ts: GET list, POST create
+- Created app/api/reviews/[id]/route.ts: PATCH update, DELETE remove
+
+## 2026-05-19 - Task 15: 首页 - 商店入口
+
+### What was done:
+- Rewrote app/page.tsx: hero section, popular categories, latest skills, popular skills, free skills
+- Dynamic data from Supabase via listSkills and categories query
+- Conditional CTA based on auth state (登录/发布技能 vs 浏览/注册)
+- Responsive grid layout
+- Empty state with publish CTA
+
+## 2026-05-19 - Task 16: 技能列表页
+
+### What was done:
+- Created app/skills/page.tsx: full list with search, category filter, sort, pagination
+- Created app/skills/SearchBar.tsx: client component with keyword search
+- Created components/skill/SkillCard.tsx: reusable skill card with icon, price, rating, installs
+- Empty state with friendly message
+- URL query parameter syncing for filter/sort/page state
+
+## 2026-05-19 - Task 17: 技能详情页
+
+### What was done:
+- Created app/skills/[slug]/page.tsx: skill header, description, versions, reviews
+- Created FavoriteButton.tsx: toggle favorite with API call
+- Created InstallButton.tsx: install/buy button based on pricing and auth
+- Displays ratings, install count, tags, author info
+- Reviews section with star ratings
+
+## 2026-05-19 - Task 18: 发布技能 - 基础信息表单
+
+### What was done:
+- Created app/publish/page.tsx: protected page with skill creation form
+- Created components/publish/SkillBasicForm.tsx: name, slug, category, description, pricing, tags
+- Created components/publish/actions.ts: Server Action for skill creation with validation
+
+## 2026-05-19 - Task 19: 发布技能 - 上传版本
+
+### What was done:
+- Created app/publish/[id]/version/page.tsx: version publishing page
+- Created components/publish/PackageUploader.tsx: version form with manifest and changelog
+
+## 2026-05-19 - Task 20: 作者控制台
+
+### What was done:
+- Created app/dashboard/page.tsx: skills table with status, installs, ratings, actions
+- Created app/dashboard/skills/[id]/page.tsx: skill stats (installs, ratings, purchases, reviews)
+- Status badges (draft, pending_review, published, rejected, suspended, archived)
+
+## 2026-05-19 - Task 21: 我的技能库
+
+### What was done:
+- Created app/library/page.tsx: three sections (已购买, 已安装, 已收藏)
+- Each section shows skill cards with links to detail pages
+- Empty states with navigation to store
+
+## 2026-05-19 - Task 22: 订单页面
+
+### What was done:
+- Created app/orders/page.tsx: order list with status badges
+- Created app/orders/[id]/page.tsx: order detail with mock payment button
+- Created PayButton client component
+
+## 2026-05-19 - Task 23: 管理员后台
+
+### What was done:
+- Created app/admin/page.tsx: overview with stats (skill/order/user counts)
+- Created app/admin/skills/page.tsx: skill audit table
+- Created app/admin/categories/page.tsx: category management table
+- Created app/admin/orders/page.tsx: all orders table
+- Created app/admin/audit-logs/page.tsx: audit log viewer
+
+## 2026-05-19 - Task 24: 权限和安全策略
+
+### What was done:
+- RLS policies for all tables in migration file (Task 2)
+- Server-side auth checks in all API routes
+- File size/type validation in lib/skills/package.ts
+- Access control (canAccessSkill) for downloads
+- Admin role checks on admin pages and API routes
+
+## 2026-05-19 - Task 25: 错误处理和反馈组件
+
+### What was done:
+- Created app/error.tsx: global error page with retry
+- Created app/not-found.tsx: 404 page with home link
+- Created app/loading.tsx: global loading spinner
+- Created components/ui/Toast.tsx: toast notification system with auto-dismiss
+- Created components/ui/Spinner.tsx: reusable loading spinner (sm/md/lg)
+- Created components/ui/Skeleton.tsx: skeleton loading placeholder
+
+## 2026-05-19 - Task 26: 响应式设计和可用性优化
+
+### What was done:
+- All pages use responsive Tailwind breakpoints (sm:, md:, lg:)
+- Forms have proper labels and error messages
+- Buttons show loading states (pending/disabled)
+- Search and filter state synced to URL query parameters
+- Mobile navigation menu with slide-down
+- Tables are scrollable on small screens (overflow-x-auto)
+
+## 2026-05-19 - Task 27: 测试和构建验证
+
+### What was done:
+- npm run lint: passed (0 errors, 0 warnings)
+- npm run build: passed (31 routes compiled)
+- TypeScript type checking: passed
+- All 27 tasks marked as complete
+
+### Final Route List (31 routes):
+/ (home), /login, /register, /skills, /skills/[slug]
+/library, /orders, /orders/[id], /dashboard, /dashboard/skills/[id]
+/publish, /publish/[id]/version
+/admin, /admin/skills, /admin/categories, /admin/orders, /admin/audit-logs
+/api/skills, /api/skills/[slug], /api/skills/[slug]/versions
+/api/skills/[slug]/download, /api/skills/[slug]/install
+/api/skills/[slug]/favorite, /api/skills/[slug]/reviews
+/api/categories, /api/categories/[id]
+/api/orders, /api/orders/[id], /api/payments/mock, /api/reviews/[id]

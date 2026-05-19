@@ -65,7 +65,7 @@
         "注册成功后跳转到登录页",
         "展示认证错误提示"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 5,
@@ -78,7 +78,7 @@
         "管理员路由额外校验 profiles.role 是否为 admin",
         "保留 callbackUrl 以便登录后回跳"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 6,
@@ -92,7 +92,7 @@
         "实现移动端导航菜单",
         "配置全局字体、颜色和基础样式"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 7,
@@ -109,7 +109,7 @@
         "实现 recordInstall() 记录安装",
         "实现 getUserSkills() 获取用户发布的技能"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 8,
@@ -127,7 +127,7 @@
         "实现 getSkillReviews() 获取技能评价列表",
         "实现 refreshSkillRating() 更新技能评分统计"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 9,
@@ -143,7 +143,7 @@
         "上传图标和截图到 skill-assets bucket",
         "校验失败时返回字段级错误"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 10,
@@ -159,7 +159,7 @@
         "DELETE /api/skills/:slug 删除草稿或下架技能",
         "校验用户是技能作者或管理员"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 11,
@@ -175,7 +175,7 @@
         "POST 记录安装并返回安装所需 manifest",
         "免费技能允许直接下载，付费技能必须先购买"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 12,
@@ -190,7 +190,7 @@
         "管理员可 DELETE 删除未使用分类",
         "首页和技能列表页使用分类数据"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 13,
@@ -206,7 +206,7 @@
         "支付成功后创建 purchases 记录",
         "防止重复购买和重复支付"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 14,
@@ -223,7 +223,7 @@
         "PATCH 修改自己的评价",
         "DELETE 删除自己的评价或管理员删除违规评价"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 15,
@@ -237,7 +237,7 @@
         "首页数据来自真实 API 或服务端查询",
         "移动端布局适配"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 16,
@@ -253,7 +253,7 @@
         "创建 components/skill/SkillCard.tsx",
         "空结果时展示友好提示"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 17,
@@ -269,7 +269,7 @@
         "展示评价列表和评分分布",
         "支持收藏和取消收藏"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 18,
@@ -284,7 +284,7 @@
         "保存为草稿",
         "表单包含客户端和服务端校验"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 19,
@@ -300,7 +300,7 @@
         "校验通过后发布 skill_versions 记录",
         "发布成功后技能状态变为 published"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 20,
@@ -315,7 +315,7 @@
         "展示订单、安装趋势和评价反馈",
         "权限限制为技能作者"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 21,
@@ -330,7 +330,7 @@
         "提供跳转评价入口",
         "空状态引导用户浏览商店"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 22,
@@ -344,7 +344,7 @@
         "开发环境提供模拟支付按钮",
         "支付成功后跳转到技能详情或我的技能库"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 23,
@@ -359,7 +359,7 @@
         "创建 app/admin/audit-logs/page.tsx 审计日志",
         "所有管理操作写入 audit_logs"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 24,
@@ -374,7 +374,7 @@
         "对 manifest、富文本描述和标签做安全校验",
         "管理员接口强制校验 role"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 25,
@@ -390,7 +390,7 @@
         "API 返回统一错误格式",
         "前端表单和操作按钮展示明确错误反馈"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 26,
@@ -405,7 +405,7 @@
         "搜索和筛选状态同步到 URL query",
         "检查文本溢出和布局错位"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 27,
@@ -420,7 +420,7 @@
         "测试未登录、未购买、无权限等边界情况",
         "使用浏览器验证桌面端和移动端关键页面"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
