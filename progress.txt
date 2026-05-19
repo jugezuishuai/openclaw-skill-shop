@@ -18,3 +18,42 @@
 - Project created at hello-nextjs/ directory
 - TypeScript strict mode enabled by default in tsconfig.json
 - Path alias @/* -> ./src/* configured by default
+
+---
+
+## [2026-05-19] - Task: Supabase 数据库 Schema
+
+### What was done:
+- Created supabase/migrations/ directory structure
+- Created 20260519_initial_schema.sql with:
+  - Enum types: user_role, skill_status, pricing_type, order_status, skill_version_status
+  - profiles table with RLS policies
+  - categories table with RLS policies
+  - skills table with all fields, indexes, and RLS policies
+  - skill_versions table with version tracking and RLS policies
+  - orders table with RLS policies
+  - purchases table with RLS policies
+  - reviews table with rating constraints and RLS policies
+  - favorites table with RLS policies
+  - installs table with RLS policies
+  - audit_logs table with RLS policies
+  - Triggers for updated_at on profiles, skills, reviews
+  - Triggers for auto-updating rating stats, install count, purchase count
+  - Initial seed data for categories
+  - Grant statements for authenticated and anon roles
+- Created 20260519_storage_setup.sql with:
+  - Storage bucket definitions for skill-packages and skill-assets
+  - Storage policies for upload/download access control
+  - Path convention documentation
+
+### Testing:
+- npm run lint passed with no errors
+- npm run build completed successfully
+
+### Notes:
+- Storage buckets need to be created via Supabase Dashboard or Management API
+- RLS policies are designed for security: users can only access their own data
+- Authors can manage their own skills and versions
+- Admins have full access to all tables
+- Free skills are accessible to everyone for download
+- Paid skills require purchase record for download
