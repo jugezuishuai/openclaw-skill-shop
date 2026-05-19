@@ -1,0 +1,20 @@
+## [2026-05-19] - Task: 项目基础配置
+
+### What was done:
+- Created Next.js App Router project with TypeScript, Tailwind CSS, and ESLint
+- Installed Supabase client dependencies: @supabase/supabase-js, @supabase/ssr
+- Installed UI helper dependencies: clsx, tailwind-merge, lucide-react
+- Created .env.local.example template file with Supabase configuration placeholders
+- Created src/lib/utils.ts with cn() utility function for className merging
+- Verified TypeScript strict mode is enabled (already configured by create-next-app)
+- Verified path alias @/* is configured (already configured by create-next-app)
+- ESLint configuration already includes Next.js and TypeScript support
+
+### Testing:
+- npm run lint passed with no errors
+- npm run build completed successfully
+
+### Notes:
+- Project created at hello-nextjs/ directory
+- TypeScript strict mode enabled by default in tsconfig.json
+- Path alias @/* -> ./src/* configured by default

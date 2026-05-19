@@ -1,0 +1,426 @@
+{
+  "project": "OpenClaw Skill Shop",
+  "description": "OpenClaw Skill 线上商店应用系统",
+  "tasks": [
+    {
+      "id": 1,
+      "title": "项目基础配置",
+      "description": "创建 Next.js 应用基础结构和通用依赖",
+      "steps": [
+        "初始化 Next.js App Router + TypeScript + Tailwind CSS 项目",
+        "安装 Supabase 客户端: @supabase/supabase-js, @supabase/ssr",
+        "安装 UI 辅助依赖: clsx, tailwind-merge, lucide-react",
+        "创建 .env.local.example 模板文件",
+        "创建 lib/utils.ts 通用工具函数",
+        "配置 ESLint、TypeScript strict mode 和路径别名"
+      ],
+      "passes": true
+    },
+    {
+      "id": 2,
+      "title": "Supabase 数据库 Schema",
+      "description": "创建技能商店所需的数据表、枚举、索引和 RLS 策略",
+      "steps": [
+        "创建 profiles 用户资料表",
+        "创建 skills 技能表，包含名称、描述、分类、价格、状态、版本等字段",
+        "创建 skill_versions 技能版本表，记录每次发布的 manifest、代码包路径和更新说明",
+        "创建 categories 分类表",
+        "创建 orders 订单表",
+        "创建 purchases 购买记录表",
+        "创建 reviews 评价表",
+        "创建 favorites 收藏表",
+        "创建 installs 安装记录表",
+        "创建 audit_logs 审计日志表",
+        "设置外键关系、唯一约束、索引和 updated_at 触发器",
+        "创建 Storage bucket: skill-packages、skill-assets",
+        "编写 SQL migration 文件到 supabase/migrations/"
+      ],
+      "passes": false
+    },
+    {
+      "id": 3,
+      "title": "Supabase 客户端封装",
+      "description": "创建浏览器端、服务端和中间件 Supabase 客户端",
+      "steps": [
+        "创建 lib/supabase/client.ts",
+        "创建 lib/supabase/server.ts",
+        "创建 lib/supabase/middleware.ts",
+        "创建 middleware.ts 集成登录态刷新",
+        "封装 getCurrentUser() 和 requireUser()",
+        "统一处理 Supabase 错误"
+      ],
+      "passes": false
+    },
+    {
+      "id": 4,
+      "title": "用户认证 - 登录与注册",
+      "description": "实现邮箱密码登录、注册和退出登录",
+      "steps": [
+        "创建 app/login/page.tsx 登录页",
+        "创建 app/register/page.tsx 注册页",
+        "创建 components/auth/LoginForm.tsx",
+        "创建 components/auth/RegisterForm.tsx",
+        "创建 components/auth/LogoutButton.tsx",
+        "登录成功后跳转到首页或原访问页面",
+        "注册成功后跳转到登录页",
+        "展示认证错误提示"
+      ],
+      "passes": false
+    },
+    {
+      "id": 5,
+      "title": "认证保护中间件",
+      "description": "保护发布、购买、个人中心和管理后台页面",
+      "steps": [
+        "保护 /dashboard、/publish、/orders、/library、/admin 路由",
+        "未登录访问受保护路由时重定向到 /login",
+        "已登录访问 /login 和 /register 时重定向到首页",
+        "管理员路由额外校验 profiles.role 是否为 admin",
+        "保留 callbackUrl 以便登录后回跳"
+      ],
+      "passes": false
+    },
+    {
+      "id": 6,
+      "title": "基础布局和导航",
+      "description": "实现应用主布局、导航栏和页脚",
+      "steps": [
+        "创建 app/layout.tsx 全局布局",
+        "创建 components/layout/Header.tsx",
+        "创建 components/layout/Footer.tsx",
+        "导航栏包含商店、分类、发布技能、我的技能库、登录状态",
+        "实现移动端导航菜单",
+        "配置全局字体、颜色和基础样式"
+      ],
+      "passes": false
+    },
+    {
+      "id": 7,
+      "title": "技能数据访问层",
+      "description": "封装技能、版本、分类、收藏和安装记录的数据操作",
+      "steps": [
+        "创建 lib/db/skills.ts",
+        "实现 createSkill() 创建技能草稿",
+        "实现 updateSkill() 更新技能信息",
+        "实现 getSkillBySlug() 获取技能详情",
+        "实现 listSkills() 技能列表查询，支持分类、关键词、排序、分页",
+        "实现 publishSkillVersion() 发布新版本",
+        "实现 favoriteSkill() 和 unfavoriteSkill()",
+        "实现 recordInstall() 记录安装",
+        "实现 getUserSkills() 获取用户发布的技能"
+      ],
+      "passes": false
+    },
+    {
+      "id": 8,
+      "title": "订单和购买数据访问层",
+      "description": "封装购买、订单、授权和评价的数据操作",
+      "steps": [
+        "创建 lib/db/orders.ts",
+        "实现 createOrder() 创建订单",
+        "实现 markOrderPaid() 标记订单支付成功",
+        "实现 getUserPurchases() 获取用户已购技能",
+        "实现 canAccessSkill() 校验用户是否有访问权限",
+        "创建 lib/db/reviews.ts",
+        "实现 createReview() 创建评价",
+        "实现 updateReview() 修改评价",
+        "实现 getSkillReviews() 获取技能评价列表",
+        "实现 refreshSkillRating() 更新技能评分统计"
+      ],
+      "passes": false
+    },
+    {
+      "id": 9,
+      "title": "技能包上传和校验",
+      "description": "实现 OpenClaw Skill 包上传、解析和 manifest 校验",
+      "steps": [
+        "定义 OpenClaw Skill manifest 类型 types/skill.ts",
+        "创建 lib/skills/manifest.ts",
+        "实现 manifest JSON Schema 校验",
+        "校验技能名称、版本号、入口文件、权限声明、命令列表",
+        "创建 lib/skills/package.ts 处理 zip 包元信息",
+        "上传技能包到 Supabase Storage 的 skill-packages bucket",
+        "上传图标和截图到 skill-assets bucket",
+        "校验失败时返回字段级错误"
+      ],
+      "passes": false
+    },
+    {
+      "id": 10,
+      "title": "技能 API - CRUD",
+      "description": "实现技能创建、更新、详情、列表和删除 API",
+      "steps": [
+        "创建 app/api/skills/route.ts",
+        "GET /api/skills 获取技能列表，支持分页、分类、关键词、排序",
+        "POST /api/skills 创建技能草稿",
+        "创建 app/api/skills/[slug]/route.ts",
+        "GET /api/skills/:slug 获取技能详情",
+        "PATCH /api/skills/:slug 更新技能信息",
+        "DELETE /api/skills/:slug 删除草稿或下架技能",
+        "校验用户是技能作者或管理员"
+      ],
+      "passes": false
+    },
+    {
+      "id": 11,
+      "title": "技能版本 API",
+      "description": "实现技能版本发布、下载和安装元信息 API",
+      "steps": [
+        "创建 app/api/skills/[slug]/versions/route.ts",
+        "GET 获取技能版本列表",
+        "POST 发布新版本",
+        "创建 app/api/skills/[slug]/download/route.ts",
+        "GET 校验权限后返回签名下载地址",
+        "创建 app/api/skills/[slug]/install/route.ts",
+        "POST 记录安装并返回安装所需 manifest",
+        "免费技能允许直接下载，付费技能必须先购买"
+      ],
+      "passes": false
+    },
+    {
+      "id": 12,
+      "title": "分类 API 和管理",
+      "description": "实现技能分类查询和管理员维护能力",
+      "steps": [
+        "创建 app/api/categories/route.ts",
+        "GET 获取启用状态的分类列表",
+        "管理员可 POST 创建分类",
+        "创建 app/api/categories/[id]/route.ts",
+        "管理员可 PATCH 修改分类名称、描述、排序和启用状态",
+        "管理员可 DELETE 删除未使用分类",
+        "首页和技能列表页使用分类数据"
+      ],
+      "passes": false
+    },
+    {
+      "id": 13,
+      "title": "订单和支付 API",
+      "description": "实现购买流程所需的订单接口和支付回调占位",
+      "steps": [
+        "创建 app/api/orders/route.ts",
+        "POST 创建订单，免费技能直接生成购买记录",
+        "GET 获取当前用户订单列表",
+        "创建 app/api/orders/[id]/route.ts",
+        "GET 获取订单详情",
+        "创建 app/api/payments/mock/route.ts 用于开发环境模拟支付成功",
+        "支付成功后创建 purchases 记录",
+        "防止重复购买和重复支付"
+      ],
+      "passes": false
+    },
+    {
+      "id": 14,
+      "title": "评价和收藏 API",
+      "description": "实现技能收藏、取消收藏、评价和评分统计接口",
+      "steps": [
+        "创建 app/api/skills/[slug]/favorite/route.ts",
+        "POST 收藏技能",
+        "DELETE 取消收藏",
+        "创建 app/api/skills/[slug]/reviews/route.ts",
+        "GET 获取评价列表",
+        "POST 创建评价，要求用户已购买或安装",
+        "创建 app/api/reviews/[id]/route.ts",
+        "PATCH 修改自己的评价",
+        "DELETE 删除自己的评价或管理员删除违规评价"
+      ],
+      "passes": false
+    },
+    {
+      "id": 15,
+      "title": "首页 - 商店入口",
+      "description": "实现线上商店首页",
+      "steps": [
+        "创建 app/page.tsx 首页",
+        "显示搜索框、热门分类、精选技能、最新上架、免费技能区",
+        "技能卡片显示图标、名称、简介、评分、安装量、价格",
+        "登录用户显示发布技能和我的技能库入口",
+        "首页数据来自真实 API 或服务端查询",
+        "移动端布局适配"
+      ],
+      "passes": false
+    },
+    {
+      "id": 16,
+      "title": "技能列表页",
+      "description": "实现技能浏览、搜索、筛选和排序",
+      "steps": [
+        "创建 app/skills/page.tsx",
+        "支持关键词搜索",
+        "支持按分类筛选",
+        "支持免费/付费筛选",
+        "支持按最新、最热、评分排序",
+        "支持分页加载",
+        "创建 components/skill/SkillCard.tsx",
+        "空结果时展示友好提示"
+      ],
+      "passes": false
+    },
+    {
+      "id": 17,
+      "title": "技能详情页",
+      "description": "实现技能详情、安装、购买、评价和版本展示",
+      "steps": [
+        "创建 app/skills/[slug]/page.tsx",
+        "展示技能图标、名称、简介、长描述、截图、价格、评分、安装量",
+        "展示作者信息、分类、标签、权限声明",
+        "展示版本历史和更新说明",
+        "免费技能显示安装按钮",
+        "付费技能未购买时显示购买按钮，已购买后显示安装按钮",
+        "展示评价列表和评分分布",
+        "支持收藏和取消收藏"
+      ],
+      "passes": false
+    },
+    {
+      "id": 18,
+      "title": "发布技能 - 基础信息表单",
+      "description": "实现作者发布技能的第一步",
+      "steps": [
+        "创建 app/publish/page.tsx",
+        "创建 components/publish/SkillBasicForm.tsx",
+        "填写技能名称、slug、短描述、长描述、分类、标签",
+        "选择免费或付费，付费时填写价格",
+        "上传技能图标和截图",
+        "保存为草稿",
+        "表单包含客户端和服务端校验"
+      ],
+      "passes": false
+    },
+    {
+      "id": 19,
+      "title": "发布技能 - 上传版本",
+      "description": "实现技能包上传、manifest 预览和版本发布",
+      "steps": [
+        "创建 app/publish/[id]/version/page.tsx",
+        "创建 components/publish/PackageUploader.tsx",
+        "支持上传 zip 技能包",
+        "解析并展示 manifest 内容",
+        "展示权限声明和命令列表供作者确认",
+        "填写版本号和更新说明",
+        "校验通过后发布 skill_versions 记录",
+        "发布成功后技能状态变为 published"
+      ],
+      "passes": false
+    },
+    {
+      "id": 20,
+      "title": "作者控制台",
+      "description": "实现作者查看和管理自己发布技能的后台",
+      "steps": [
+        "创建 app/dashboard/page.tsx",
+        "显示作者发布的技能列表",
+        "显示每个技能的状态、版本、安装量、收入、评分",
+        "支持编辑草稿、发布新版本、下架技能",
+        "创建 app/dashboard/skills/[id]/page.tsx 管理详情页",
+        "展示订单、安装趋势和评价反馈",
+        "权限限制为技能作者"
+      ],
+      "passes": false
+    },
+    {
+      "id": 21,
+      "title": "我的技能库",
+      "description": "实现用户已购买、已安装、已收藏技能管理",
+      "steps": [
+        "创建 app/library/page.tsx",
+        "展示已购买技能列表",
+        "展示已安装技能列表",
+        "展示已收藏技能列表",
+        "提供重新下载安装按钮",
+        "提供跳转评价入口",
+        "空状态引导用户浏览商店"
+      ],
+      "passes": false
+    },
+    {
+      "id": 22,
+      "title": "订单页面",
+      "description": "实现用户订单列表和订单详情",
+      "steps": [
+        "创建 app/orders/page.tsx",
+        "展示订单号、技能名称、金额、状态、创建时间",
+        "创建 app/orders/[id]/page.tsx",
+        "展示订单详情和支付状态",
+        "开发环境提供模拟支付按钮",
+        "支付成功后跳转到技能详情或我的技能库"
+      ],
+      "passes": false
+    },
+    {
+      "id": 23,
+      "title": "管理员后台",
+      "description": "实现平台管理员审核、分类和内容治理",
+      "steps": [
+        "创建 app/admin/page.tsx 管理概览",
+        "创建 app/admin/skills/page.tsx 技能审核列表",
+        "管理员可审核通过、驳回、下架技能",
+        "创建 app/admin/categories/page.tsx 分类管理",
+        "创建 app/admin/orders/page.tsx 订单概览",
+        "创建 app/admin/audit-logs/page.tsx 审计日志",
+        "所有管理操作写入 audit_logs"
+      ],
+      "passes": false
+    },
+    {
+      "id": 24,
+      "title": "权限和安全策略",
+      "description": "完善 RLS、服务端授权、上传限制和输入校验",
+      "steps": [
+        "为 profiles、skills、orders、purchases、reviews 配置 RLS 策略",
+        "服务端 API 校验当前用户权限",
+        "限制上传文件大小、类型和路径",
+        "防止用户访问未购买的付费技能包",
+        "防止普通用户修改他人技能",
+        "对 manifest、富文本描述和标签做安全校验",
+        "管理员接口强制校验 role"
+      ],
+      "passes": false
+    },
+    {
+      "id": 25,
+      "title": "错误处理和反馈组件",
+      "description": "实现统一错误页、空状态、Toast 和加载状态",
+      "steps": [
+        "创建 app/error.tsx 全局错误页",
+        "创建 app/not-found.tsx 404 页面",
+        "创建 app/loading.tsx 全局加载页",
+        "创建 components/ui/Toast.tsx",
+        "创建 components/ui/Spinner.tsx",
+        "创建 components/ui/Skeleton.tsx",
+        "API 返回统一错误格式",
+        "前端表单和操作按钮展示明确错误反馈"
+      ],
+      "passes": false
+    },
+    {
+      "id": 26,
+      "title": "响应式设计和可用性优化",
+      "description": "优化移动端、键盘操作和常用流程体验",
+      "steps": [
+        "首页、列表页、详情页适配移动端",
+        "发布流程适配移动端",
+        "后台表格在小屏下可读",
+        "表单字段具备明确 label 和错误提示",
+        "按钮 loading 状态防止重复提交",
+        "搜索和筛选状态同步到 URL query",
+        "检查文本溢出和布局错位"
+      ],
+      "passes": false
+    },
+    {
+      "id": 27,
+      "title": "测试和构建验证",
+      "description": "完成核心流程测试和生产构建验证",
+      "steps": [
+        "运行 npm run lint 检查代码规范",
+        "运行 npm run build 确保生产构建成功",
+        "测试完整用户流程：注册→登录→浏览技能→购买/安装→评价",
+        "测试作者流程：创建技能→上传版本→发布→查看数据",
+        "测试管理员流程：审核技能→管理分类→查看审计日志",
+        "测试未登录、未购买、无权限等边界情况",
+        "使用浏览器验证桌面端和移动端关键页面"
+      ],
+      "passes": false
+    }
+  ]
+}
