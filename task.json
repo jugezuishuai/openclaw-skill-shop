@@ -49,7 +49,7 @@
         "封装 getCurrentUser() 和 requireUser()",
         "统一处理 Supabase 错误"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 4,

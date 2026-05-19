@@ -1,59 +1,17 @@
-## [2026-05-19] - Task: 项目基础配置
+## 2026-05-19 - Task 3: Supabase 客户端封装
 
 ### What was done:
-- Created Next.js App Router project with TypeScript, Tailwind CSS, and ESLint
-- Installed Supabase client dependencies: @supabase/supabase-js, @supabase/ssr
-- Installed UI helper dependencies: clsx, tailwind-merge, lucide-react
-- Created .env.local.example template file with Supabase configuration placeholders
-- Created src/lib/utils.ts with cn() utility function for className merging
-- Verified TypeScript strict mode is enabled (already configured by create-next-app)
-- Verified path alias @/* is configured (already configured by create-next-app)
-- ESLint configuration already includes Next.js and TypeScript support
+- Created lib/supabase/client.ts - browser-side Supabase client using @supabase/ssr
+- Created lib/supabase/server.ts - server-side client with getCurrentUser() and requireUser() helpers, plus service-role client
+- Created lib/supabase/middleware.ts - updateSession() for middleware-based session refresh
+- Created lib/supabase/errors.ts - SupabaseError class with unified error handling (handleSupabaseError, isSupabaseError)
+- Created middleware.ts at project root integrating session refresh via updateSession()
 
 ### Testing:
-- npm run lint passed with no errors
-- npm run build completed successfully
+- npm run lint: passed (no errors)
+- npm run build: passed (compiled successfully, TypeScript checked)
 
 ### Notes:
-- Project created at hello-nextjs/ directory
-- TypeScript strict mode enabled by default in tsconfig.json
-- Path alias @/* -> ./src/* configured by default
-
----
-
-## [2026-05-19] - Task: Supabase 数据库 Schema
-
-### What was done:
-- Created supabase/migrations/ directory structure
-- Created 20260519_initial_schema.sql with:
-  - Enum types: user_role, skill_status, pricing_type, order_status, skill_version_status
-  - profiles table with RLS policies
-  - categories table with RLS policies
-  - skills table with all fields, indexes, and RLS policies
-  - skill_versions table with version tracking and RLS policies
-  - orders table with RLS policies
-  - purchases table with RLS policies
-  - reviews table with rating constraints and RLS policies
-  - favorites table with RLS policies
-  - installs table with RLS policies
-  - audit_logs table with RLS policies
-  - Triggers for updated_at on profiles, skills, reviews
-  - Triggers for auto-updating rating stats, install count, purchase count
-  - Initial seed data for categories
-  - Grant statements for authenticated and anon roles
-- Created 20260519_storage_setup.sql with:
-  - Storage bucket definitions for skill-packages and skill-assets
-  - Storage policies for upload/download access control
-  - Path convention documentation
-
-### Testing:
-- npm run lint passed with no errors
-- npm run build completed successfully
-
-### Notes:
-- Storage buckets need to be created via Supabase Dashboard or Management API
-- RLS policies are designed for security: users can only access their own data
-- Authors can manage their own skills and versions
-- Admins have full access to all tables
-- Free skills are accessible to everyone for download
-- Paid skills require purchase record for download
+- Middleware uses the Next.js 16 middleware convention (deprecation warning for "proxy" is advisory only)
+- Service client uses SUPABASE_SERVICE_ROLE_KEY for admin operations
+- All clients use @supabase/ssr for cookie-based auth in App Router
