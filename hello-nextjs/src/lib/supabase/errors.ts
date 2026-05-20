@@ -27,6 +27,17 @@ export function handleSupabaseError(error: unknown): SupabaseError {
     return new SupabaseError(error.message);
   }
 
+  // Handle PostgrestError objects (plain objects with code/message/details)
+  if (typeof error === "object" && error !== null) {
+    const pgError = error as Record<string, unknown>;
+    if (pgError.code === "PGRST116") {
+      return new SupabaseError("Resource not found", 404, "PGRST116");
+    }
+    if (typeof pgError.message === "string") {
+      return new SupabaseError(pgError.message);
+    }
+  }
+
   return new SupabaseError("An unexpected error occurred");
 }
 

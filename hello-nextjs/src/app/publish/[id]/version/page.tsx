@@ -24,7 +24,7 @@ export default async function PublishVersionPage({
     <div className="mx-auto max-w-2xl px-4 py-8">
       <h1 className="mb-2 text-2xl font-bold text-gray-900">发布新版本</h1>
       <p className="mb-6 text-gray-500">为 &ldquo;{skill.name}&rdquo; 上传新版本</p>
-      <PackageUploader skillId={skill.id} skillSlug={skill.slug} />
+      <PackageUploader skillSlug={skill.slug} />
     </div>
   );
 }

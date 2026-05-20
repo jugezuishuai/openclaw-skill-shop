@@ -28,17 +28,22 @@ export default async function SkillsPage({
   });
 
   const totalPages = Math.ceil(total / 12);
+  const currentSort = params.sort || "latest";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="mb-6 text-3xl font-bold text-gray-900">技能商店</h1>
+      <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">技能商店</h1>
+      <p className="mt-1 text-sm text-gray-500">探索 {total} 个优质技能</p>
+      <div className="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500" />
 
-      <SearchBar defaultValue={params.keyword} />
+      <div className="mt-6">
+        <SearchBar defaultValue={params.keyword} />
+      </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-5 flex flex-wrap gap-2">
         <Link
           href="/skills"
-          className={`rounded-full px-3 py-1 text-sm ${!params.category ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+          className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${!params.category ? "bg-blue-600 text-white shadow-md" : "bg-white border border-gray-200/80 text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 transition-all duration-200 active:scale-[0.96]"}`}
         >
           全部
         </Link>
@@ -47,33 +52,27 @@ export default async function SkillsPage({
             <Link
               key={cat.id}
               href={`/skills?category=${cat.slug}`}
-              className={`rounded-full px-3 py-1 text-sm ${params.category === cat.slug ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+              className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${params.category === cat.slug ? "bg-blue-600 text-white shadow-md" : "bg-white border border-gray-200/80 text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 transition-all duration-200 active:scale-[0.96]"}`}
             >
               {cat.name}
             </Link>
           ))}
       </div>
 
-      <div className="mt-4 flex items-center gap-3 text-sm">
-        <span className="text-gray-500">排序：</span>
-        <Link
-          href={`/skills?${buildQuery(params, { sort: "latest" })}`}
-          className={params.sort !== "popular" && params.sort !== "rating" ? "text-blue-600 font-medium" : "text-gray-500"}
-        >
-          最新
-        </Link>
-        <Link
-          href={`/skills?${buildQuery(params, { sort: "popular" })}`}
-          className={params.sort === "popular" ? "text-blue-600 font-medium" : "text-gray-500"}
-        >
-          最热
-        </Link>
-        <Link
-          href={`/skills?${buildQuery(params, { sort: "rating" })}`}
-          className={params.sort === "rating" ? "text-blue-600 font-medium" : "text-gray-500"}
-        >
-          评分
-        </Link>
+      <div className="mt-5 flex items-center gap-1 rounded-xl bg-white border border-gray-200/80 p-1 w-fit shadow-sm">
+        {[
+          { key: "latest", label: "最新" },
+          { key: "popular", label: "最热" },
+          { key: "rating", label: "评分" },
+        ].map(({ key, label }) => (
+          <Link
+            key={key}
+            href={`/skills?${buildQuery(params, { sort: key })}`}
+            className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${currentSort === key || (!params.sort && key === "latest") ? "bg-blue-600 text-white shadow-md" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"}`}
+          >
+            {label}
+          </Link>
+        ))}
       </div>
 
       {skills.length > 0 ? (
@@ -85,12 +84,12 @@ export default async function SkillsPage({
           </div>
 
           {totalPages > 1 && (
-            <div className="mt-8 flex justify-center gap-2">
+            <div className="mt-10 flex justify-center gap-2">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <Link
                   key={page}
                   href={`/skills?${buildQuery(params, { page: String(page) })}`}
-                  className={`rounded-md px-3 py-1 text-sm ${(Number(params.page) || 1) === page ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"}`}
+                  className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${(Number(params.page) || 1) === page ? "bg-blue-600 text-white shadow-md" : "bg-white border border-gray-200/80 text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 transition-all duration-200 active:scale-[0.96]"}`}
                 >
                   {page}
                 </Link>
@@ -99,10 +98,11 @@ export default async function SkillsPage({
           )}
         </>
       ) : (
-        <div className="py-16 text-center">
-          <p className="text-lg text-gray-500">
+        <div className="py-20 text-center">
+          <p className="text-lg font-medium text-gray-900">
             {params.keyword ? `未找到包含 "${params.keyword}" 的技能` : "暂无技能"}
           </p>
+          <p className="mt-1 text-sm text-gray-500">换个关键词试试，或浏览其他分类</p>
         </div>
       )}
     </div>

@@ -1,0 +1,14 @@
+Task 3 "Supabase 客户端封装" is complete. Here's a summary:
+
+**Files created:**
+- `lib/supabase/client.ts` — browser-side Supabase client
+- `lib/supabase/server.ts` — server-side client with `createClient()`, `createServiceClient()`, `getCurrentUser()`, and `requireUser()`
+- `lib/supabase/middleware.ts` — `updateSession()` for middleware session refresh
+- `lib/supabase/errors.ts` — `SupabaseError` class with `handleSupabaseError()` and `isSupabaseError()`
+- `middleware.ts` — integrates session refresh at the edge
+
+**Verification:**
+- `npm run lint` — passed, no errors
+- `npm run build` — compiled successfully, TypeScript checked
+
+**Commit:** `4eafb3b` — Task 3: Supabase 客户端封装 - completed (7 files, 162 insertions)

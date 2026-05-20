@@ -50,25 +50,25 @@ export async function markOrderPaid(
   orderId: string,
   paymentRef?: string
 ) {
-  const supabase = await createServiceClient();
+  const supabase = createServiceClient();
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .select("*")
     .eq("id", orderId)
-    .single();
+    .maybeSingle();
 
   if (orderError) throw orderError;
   if (!order) throw new Error("Order not found");
 
+  // Upsert purchase to handle re-purchase of same skill gracefully
   const { data: purchase, error: purchaseError } = await supabase
     .from("purchases")
-    .insert({
-      user_id: order.user_id,
-      skill_id: order.skill_id,
-      order_id: orderId,
-    })
+    .upsert(
+      { user_id: order.user_id, skill_id: order.skill_id, order_id: orderId },
+      { onConflict: "user_id, skill_id" }
+    )
     .select()
-    .single();
+    .maybeSingle();
 
   if (purchaseError) throw purchaseError;
 
@@ -81,7 +81,7 @@ export async function markOrderPaid(
     })
     .eq("id", orderId)
     .select()
-    .single();
+    .maybeSingle();
 
   if (updateError) throw updateError;
 
@@ -128,16 +128,34 @@ export async function canAccessSkill(
   return !!purchase;
 }
 
-export async function getUserOrders(userId: string) {
+export interface OrderListParams {
+  status?: string;
+  page?: number;
+  limit?: number;
+}
+
+export async function getUserOrders(userId: string, params: OrderListParams = {}) {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const { status, page = 1, limit = 10 } = params;
+
+  let query = supabase
     .from("orders")
-    .select("*, skills:skill_id(name, slug)")
+    .select("*, skills:skill_id(name, slug)", { count: "exact" })
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
+  if (status) {
+    query = query.eq("status", status);
+  }
+
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+  query = query.range(from, to);
+
+  const { data, error, count } = await query;
+
   if (error) throw error;
-  return data;
+  return { data, total: count || 0, page, limit };
 }
 
 export async function getOrderById(orderId: string) {

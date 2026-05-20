@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash init.sh)",
+      "Bash(git checkout *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(npm list *)",
+      "Bash(supabase link *)",
+      "Bash(SUPABASE_DB_PASSWORD=\"18701168079q.\" node scripts/run-migration.mjs)",
+      "Bash(nslookup db.eejewwvioiqrvczhyisp.supabase.co)",
+      "Bash(node scripts/run-migration.mjs)"
+    ]
+  }
+}

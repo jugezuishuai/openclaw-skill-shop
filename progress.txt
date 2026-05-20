@@ -1,3 +1,24 @@
+## 2026-05-20 - UI Beautification (全项目 UI 美化)
+
+### What was done:
+- Wave 1 (globals.css): Added design tokens (--color-surface, --color-border, etc.), 6 new @keyframes (fadeInUp, fadeIn, scaleIn, slideUpOut), custom scrollbar, ::selection, reduced-motion support
+- Wave 2 (Shell): layout.tsx body gradient bg + ToastContainer; Header glass morphism enhancement (backdrop-blur-xl, three-stop gradient logo); Footer gradient bg + nav link underlines; UserMenu dropdown animation + blue hover; MobileMenu entrance animation + consistent buttons
+- Wave 3 (UI Components): Toast scaleIn animation + backdrop-blur; Spinner thicker ring; Skeleton shimmer gradient; StatusBadge dot indicator + order statuses; LogoutButton red hover
+- Wave 4 (Feature Components): SkillCard hover lift (-translate-y-1) + shadow-xl; SearchBar group focus-within icon color; LoginForm/RegisterForm enhanced inputs + button press feedback
+- Wave 5 (Main Pages): Home hero deeper gradient + radial glow + staggered animations; Skills list accent bar + filter/sort active:scale; Skill detail left-border version timeline + enhanced review cards; Login/Register form cards shadow-md + ring; Dashboard left-border status colors + StatusBadge import; Library card group-hover effects + enhanced empty states; Orders left-border status colors + StatusBadge import
+- Wave 6 (Admin): Stat cards with colored top accent; Quick link cards hover lift + icon scale; All tables shadow-md container + gradient header + blue-tinted row hover; Categories enabled dot animate-pulse
+- Wave 7 (Detail Buttons): PayButton, FavoriteButton, InstallButton all using shadow-md + hover:shadow-lg + active:scale-[0.97]
+- Wave 8 (Fallback Pages): Loading fadeIn animation; Not-found/Error gradient icon containers + shadow-inner + enhanced CTA buttons
+
+### Testing:
+- npm run build: ✓ Compiled successfully, all 31 routes OK
+- npm run lint: ✓ No errors
+
+### Notes:
+- All changes use existing dependencies only (Tailwind v4, lucide-react) — no new packages
+- Consistent patterns applied across all 18 files: border-gray-200/80, shadow-md/sm upgrade, three-stop gradients on icons, active:scale-[0.97] on buttons
+- Replaced inline StatusBadge in dashboard and orders pages with shared component from components/ui/StatusBadge.tsx
+
 ## 2026-05-19 - Task 3: Supabase 客户端封装
 
 ### What was done:

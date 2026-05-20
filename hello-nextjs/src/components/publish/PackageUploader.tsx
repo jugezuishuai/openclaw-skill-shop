@@ -1,15 +1,16 @@
 "use client";
 
 import { useActionState } from "react";
+import { useToast } from "@/components/ui/Toast";
 
 const initialState = { error: "", success: "" };
 
 export default function PackageUploader({
   skillSlug,
 }: {
-  skillId: string;
   skillSlug: string;
 }) {
+  const toast = useToast();
   const [state, action, pending] = useActionState(
     async (prev: typeof initialState, formData: FormData) => {
       const version = formData.get("version") as string;
@@ -36,7 +37,11 @@ export default function PackageUploader({
           }),
         });
         const data = await res.json();
-        if (!res.ok) return { error: data.error || "上传失败", success: "" };
+        if (!res.ok) {
+          toast("error", data.error || "上传失败");
+          return { error: data.error || "上传失败", success: "" };
+        }
+        toast("success", `版本 ${version} 发布成功！`);
         return { error: "", success: `版本 ${version} 发布成功！` };
       } catch {
         return { error: "网络错误", success: "" };

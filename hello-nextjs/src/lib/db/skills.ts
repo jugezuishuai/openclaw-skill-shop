@@ -142,7 +142,16 @@ export async function listSkills(params: SkillListParams = {}) {
     .eq("status", params.status || "published");
 
   if (category) {
-    query = query.eq("categories.slug", category);
+    const { data: cat } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("slug", category)
+      .single();
+    if (cat) {
+      query = query.eq("category_id", cat.id);
+    } else {
+      return { data: [], total: 0 };
+    }
   }
 
   if (keyword) {

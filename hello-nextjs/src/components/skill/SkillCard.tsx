@@ -1,41 +1,59 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Star, Download } from "lucide-react";
 import type { Skill } from "@/lib/db/skills";
 
 export default function SkillCard({ skill }: { skill: Skill }) {
+  const isFree = skill.pricing_type === "free";
+  const price = isFree ? null : `$${(skill.price_cents / 100).toFixed(2)}`;
+
   return (
     <Link
       href={`/skills/${skill.slug}`}
-      className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-blue-200 transition-all"
+      className="group rounded-xl border border-gray-200/80 bg-white p-5 shadow-md hover:shadow-xl hover:border-blue-300/50 transition-all duration-300 hover:-translate-y-1"
     >
-      <div className="mb-3 flex items-center gap-3">
+      <div className="mb-4 flex items-start gap-3">
         {skill.icon_url ? (
-          <Image src={skill.icon_url} alt="" width={40} height={40} className="rounded-lg object-cover" />
+          <Image
+            src={skill.icon_url}
+            alt=""
+            width={48}
+            height={48}
+            className="rounded-xl object-cover flex-shrink-0"
+          />
         ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 font-bold">
+          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-500 text-lg font-bold text-white shadow-md ring-1 ring-blue-400/20 group-hover:shadow-lg transition-shadow">
             {skill.name.charAt(0)}
           </div>
         )}
-        <div>
-          <h3 className="font-semibold text-gray-900">{skill.name}</h3>
-          <div className="flex items-center gap-1 text-xs text-gray-500">
-            <span>★ {skill.rating_avg.toFixed(1)}</span>
+        <div className="min-w-0 flex-1">
+          <h3 className="font-semibold text-gray-900 truncate group-hover:text-blue-700 transition-colors duration-200">
+            {skill.name}
+          </h3>
+          <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-400">
+            <span className="inline-flex items-center gap-0.5">
+              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+              {skill.rating_avg.toFixed(1)}
+            </span>
             <span>·</span>
-            <span>↓ {skill.install_count}</span>
+            <span className="inline-flex items-center gap-0.5">
+              <Download className="h-3 w-3" />
+              {skill.install_count.toLocaleString()}
+            </span>
           </div>
         </div>
       </div>
-      <p className="line-clamp-2 text-sm text-gray-500">
+
+      <p className="line-clamp-2 text-sm text-gray-500 leading-relaxed min-h-[2.5rem] group-hover:text-gray-600 transition-colors duration-200">
         {skill.short_description || "暂无简介"}
       </p>
-      <div className="mt-3 flex items-center justify-between">
-        <span className="font-bold text-gray-900">
-          {skill.pricing_type === "paid"
-            ? `$${(skill.price_cents || 0) / 100}`
-            : "免费"}
+
+      <div className="mt-4 flex items-center justify-between">
+        <span className={`text-sm font-bold tracking-tight ${isFree ? "text-emerald-600" : "text-gray-900"}`}>
+          {isFree ? "免费" : price}
         </span>
         {skill.tags.length > 0 && (
-          <span className="text-xs rounded bg-gray-100 px-2 py-0.5 text-gray-600">
+          <span className="rounded-full bg-gray-100/80 px-2.5 py-0.5 text-xs font-medium text-gray-500 group-hover:bg-blue-100 group-hover:text-blue-700 transition-all duration-300">
             {skill.tags[0]}
           </span>
         )}

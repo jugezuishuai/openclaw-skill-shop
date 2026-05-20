@@ -140,6 +140,12 @@ PROMPT_EOF
     # Using -p for print mode (non-interactive)
     # Using --dangerously-skip-permissions to bypass all permission checks
     # Using --allowedTools to explicitly allow all tools
+    
+    # Set model configuration before running claude
+    export ANTHROPIC_BASE_URL="https://api.deepseek.com/anthropic"
+    export ANTHROPIC_AUTH_TOKEN="sk-42cc5ec8df2c4f56a354a8ec0831bd52"
+    export ANTHROPIC_MODEL="deepseek-v4-pro"
+    
     if claude -p \
         --dangerously-skip-permissions \
         --allowed-tools "Bash Edit Read Write Glob Grep Task WebSearch WebFetch mcp__playwright__*" \

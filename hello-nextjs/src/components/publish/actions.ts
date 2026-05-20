@@ -1,7 +1,8 @@
 "use server";
 
+"use server";
+
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createSkill } from "@/lib/db/skills";
 
@@ -21,10 +22,19 @@ export async function publishSkill(
   const short_description = formData.get("short_description") as string;
   const description = formData.get("description") as string;
   const pricing_type = formData.get("pricing_type") as "free" | "paid";
+  const priceCentsStr = formData.get("price_cents") as string;
   const tagsStr = formData.get("tags") as string;
 
   if (!name || !slug) {
     return { error: "名称和 slug 为必填项", success: "" };
+  }
+
+  const price_cents = pricing_type === "paid" && priceCentsStr
+    ? Math.round(parseFloat(priceCentsStr) * 100)
+    : 0;
+
+  if (pricing_type === "paid" && price_cents <= 0) {
+    return { error: "付费技能必须设置有效价格", success: "" };
   }
 
   try {
@@ -35,13 +45,18 @@ export async function publishSkill(
       short_description: short_description || undefined,
       description: description || undefined,
       pricing_type: pricing_type || "free",
+      price_cents,
       tags: tagsStr ? tagsStr.split(",").map((t) => t.trim()).filter(Boolean) : [],
     });
 
     revalidatePath("/dashboard");
     revalidatePath("/publish");
-    redirect(`/dashboard`);
+    return { error: "", success: "草稿保存成功" };
   } catch (e) {
-    return { error: (e as Error).message || "创建失败", success: "" };
+    const msg = (e as Error).message || "";
+    if (msg.includes("duplicate key") || msg.includes("skills_slug_key")) {
+      return { error: `slug "${slug}" 已被占用，请换一个`, success: "" };
+    }
+    return { error: msg || "创建失败", success: "" };
   }
 }

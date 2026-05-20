@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthState = {
@@ -12,7 +11,7 @@ export type AuthState = {
 export async function login(
   prevState: AuthState,
   formData: FormData
-): Promise<AuthState> {
+): Promise<AuthState & { redirectTo?: string }> {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -33,13 +32,13 @@ export async function login(
   }
 
   revalidatePath("/", "layout");
-  redirect(callbackUrl);
+  return { message: "登录成功", redirectTo: callbackUrl };
 }
 
 export async function register(
   prevState: AuthState,
   formData: FormData
-): Promise<AuthState> {
+): Promise<AuthState & { redirectTo?: string }> {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -67,12 +66,12 @@ export async function register(
     return { error: error.message };
   }
 
-  redirect("/login?message=注册成功，请登录");
+  return { message: "注册成功，请登录", redirectTo: "/login" };
 }
 
 export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
-  redirect("/login");
+  return { message: "已退出登录", redirectTo: "/login" };
 }

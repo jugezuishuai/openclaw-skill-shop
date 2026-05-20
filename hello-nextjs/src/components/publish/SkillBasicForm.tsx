@@ -1,7 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { publishSkill } from "./actions";
+import { useToast } from "@/components/ui/Toast";
 
 interface Category {
   id: string;
@@ -13,6 +15,16 @@ const initialState = { error: "", success: "" };
 
 export default function SkillBasicForm({ categories }: { categories: Category[] }) {
   const [state, action, pending] = useActionState(publishSkill, initialState);
+  const [pricingType, setPricingType] = useState("free");
+  const router = useRouter();
+  const toast = useToast();
+
+  useEffect(() => {
+    if (state.success) {
+      toast("success", state.success);
+      router.push("/dashboard");
+    }
+  }, [state.success, toast, router]);
 
   return (
     <form action={action} className="space-y-5 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -55,11 +67,35 @@ export default function SkillBasicForm({ categories }: { categories: Category[] 
 
       <div>
         <label className="block text-sm font-medium text-gray-700">定价</label>
-        <select name="pricing_type" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        <select
+          name="pricing_type"
+          value={pricingType}
+          onChange={(e) => setPricingType(e.target.value)}
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        >
           <option value="free">免费</option>
           <option value="paid">付费</option>
         </select>
       </div>
+
+      {pricingType === "paid" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700">价格 (USD)</label>
+          <div className="mt-1 relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+            <input
+              name="price_cents"
+              type="number"
+              step="0.01"
+              min="0.01"
+              required
+              placeholder="9.99"
+              className="block w-full rounded-md border border-gray-300 pl-8 pr-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+          <p className="mt-1 text-xs text-gray-400">输入美元价格，例如 9.99</p>
+        </div>
+      )}
 
       <div>
         <label className="block text-sm font-medium text-gray-700">标签（逗号分隔）</label>
