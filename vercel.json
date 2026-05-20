@@ -1,6 +1,5 @@
 {
-  "buildCommand": "cd hello-nextjs && npm run build",
-  "installCommand": "cd hello-nextjs && npm install",
-  "outputDirectory": "hello-nextjs/.next",
+  "rootDirectory": "hello-nextjs",
+  "outputDirectory": ".next",
   "framework": "nextjs"
 }
