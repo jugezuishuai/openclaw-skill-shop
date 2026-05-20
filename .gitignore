@@ -19,6 +19,12 @@ build/
 # Screenshots
 *.png
 
+# Claude Code
+.claude/
+
+# Test artifacts
+test-results/
+
 # Environment
 .env.local
 .env.*.local
